@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>كوكب نمنم — عالم صغير بحب كبير</title>
+  <meta name="description" content="كوكب نمنم: عالم صغير سويتُه من حبي إلج، مع أغنية «خليك معايا». المسي الكوكب، وادخلي لقصة مكتوبة بكل قلبي.">
+  <meta name="theme-color" content="#160f2b">
+  <meta property="og:title" content="كوكب نمنم — عالم صغير بحب كبير">
+  <meta property="og:description" content="كل نجمة بيه إسمج، وكل نبضة بيه إلج. المسي الكوكب... وخليك معايا.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ar_IQ">
+  <meta property="og:site_name" content="كوكب نمنم">
+  <meta property="og:image" content="og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="كوكب نمنم — كوكب وردي تحيط به القلوب، ودبدوب صغير، وعنوان الموقع بخط عربي">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="كوكب نمنم — عالم صغير بحب كبير">
+  <meta name="twitter:description" content="كل نجمة بيه إسمج، وكل نبضة بيه إلج. المسي الكوكب... وخليك معايا.">
+  <meta name="twitter:image" content="og-image.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="كوكب نمنم">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23160f2b'/%3E%3Cpath d='M32 50S14 38.5 14 27.5A8.5 8.5 0 0 1 32 23a8.5 8.5 0 0 1 18 4.5C50 38.5 32 50 32 50Z' fill='%23ffd6e9'/%3E%3C/svg%3E">
+  <link rel="preload" as="font" type="font/woff2" href="vendor/fonts/WwkYxPW1E165rajQKDulKDwNQNAY2e_7.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="vendor/fonts/Iura6YBj_oCad4k1nzSBC45I.woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    /* وضع المعاينة السريعة للقطات التصميم — لا يؤثر على الزائر */
+    if (/[?&]snap\b/.test(window.location.search)) {
+      document.documentElement.classList.add("snap");
+    }
+  </script>
+</head>
+<body>
+
+  <!-- أيقونات مرسومة خط واحد -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-heart" viewBox="0 0 24 24">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+      </symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24">
+        <path d="M12 3c.6 4.8 3.6 7.8 8.4 8.4-4.8.6-7.8 3.6-8.4 8.4-.6-4.8-3.6-7.8-8.4-8.4C8.4 10.8 11.4 7.8 12 3Z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- خلفية السكون -->
+  <div class="sky" aria-hidden="true"></div>
+  <canvas id="scene" class="scene" aria-hidden="true"></canvas>
+
+  <!-- كوكب احتياطي يظهر فقط إذا ما اشتغل WebGL -->
+  <div class="fallback-planet" aria-hidden="true">
+    <span class="fallback-ring"></span>
+    <span class="fallback-heart">♥</span>
+  </div>
+
+  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- شاشة التحميل -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <span class="loader-mark">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <path d="M20 34S7 25.7 7 16.7A7 7 0 0 1 20 13a7 7 0 0 1 13 3.7C33 25.7 20 34 20 34Z"/>
+          <circle cx="20" cy="17" r="1.5"/>
+        </svg>
+      </span>
+      <p class="loader-name">كوكب نمنم</p>
+      <span class="loader-line"><i></i></span>
+      <p class="loader-latin">NIMNIM'S PLANET</p>
+    </div>
+  </div>
+
+  <!-- الصفحة الأولى -->
+  <main class="landing" id="landing">
+    <div class="landing-shade" aria-hidden="true"></div>
+
+    <header class="site-head">
+      <div class="brand" aria-label="كوكب نمنم">
+        <span class="brand-mark">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <path d="M20 34S7 25.7 7 16.7A7 7 0 0 1 20 13a7 7 0 0 1 13 3.7C33 25.7 20 34 20 34Z"/>
+            <circle cx="20" cy="17" r="1.5"/>
+          </svg>
+        </span>
+        <span class="brand-type">
+          <span class="brand-name">كوكب نمنم</span>
+          <span class="brand-latin">NIMNIM'S PLANET</span>
+        </span>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-top">
+        <p class="kicker">
+          <span class="k-star" aria-hidden="true">✦</span>
+          <span>عالمٌ صغير، إلج وحدج</span>
+          <span class="k-star" aria-hidden="true">✦</span>
+        </p>
+      </div>
+
+      <div class="hero-block">
+        <h1 class="hero-title" id="hero-title">كوكب <span class="hero-name">نمنم</span></h1>
+        <p class="hero-sub">سويتُ لج عالم صغير... بيه كل حبي إلج،<br class="only-wide"> وكلشي بيه إسمج.</p>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="enter-btn" type="button">
+            <span>ادخلي عالم نمنم</span>
+            <svg class="ic" aria-hidden="true"><use href="#i-heart"></use></svg>
+          </button>
+          <p class="hint"><span class="hint-spark" aria-hidden="true"></span> أو المسي الكوكب... هوه يسمعج</p>
+        </div>
+      </div>
+
+      <p class="hero-credit" aria-hidden="true">NIMNIM'S PLANET <span>·</span> MMXXVI</p>
+    </section>
+
+          <span class="side-rail" aria-hidden="true">A LITTLE UNIVERSE, MADE OF LOVE</span>
+  </main>
+
+  <!-- عالم القصة -->
+  <div class="story" id="story" role="region" aria-label="رسالتي إلج" aria-hidden="true" inert>
+    <header class="story-bar">
+      <button class="back" id="back-btn" type="button">
+        <svg class="ic" aria-hidden="true"><use href="#i-arrow"></use></svg>
+        <span>رجوع للكوكب</span>
+      </button>
+      <p class="story-brand">كوكب نمنم</p>
+      <span class="bar-space" aria-hidden="true"></span>
+      <span class="story-progress" aria-hidden="true"><i id="story-progress-fill"></i></span>
+    </header>
+
+    <div class="story-content">
+
+      <section class="chapter chapter-arrival wrap" aria-labelledby="story-title">
+        <div class="arrival-inner">
+          <p class="eyebrow" data-reveal><span class="eyebrow-num">٠١</span><span class="eyebrow-line" aria-hidden="true"></span><span>الوصول</span></p>
+          <h2 class="display-arrival" id="story-title" tabindex="-1" data-reveal style="--d:.08s">وصلتي،<br><span class="soft-pink">نمنم.</span></h2>
+          <p class="arrival-lede" data-reveal style="--d:.16s">هذا الكوكب ما سويتُه صدفة. جمعت بيه كل حبي، وكل خوفي عليج، وكل دعوة خير إلج... وسويت لج عالم ما بيه غيرج.</p>
+          <p class="arrival-lede muted" data-reveal style="--d:.24s">من هنا، كلشي يبدأ بيج. وكلشي، يرجع إلج.</p>
+          <span class="float-heart float-heart-a" aria-hidden="true">♥</span>
+        </div>
+        <p class="scroll-cue" aria-hidden="true"><span>نازلي شوي</span><i></i></p>
+      </section>
+
+      <section class="chapter wrap" aria-labelledby="chapter-letter">
+        <div class="narrow">
+          <p class="eyebrow" data-reveal><span class="eyebrow-num">٠٢</span><span class="eyebrow-line" aria-hidden="true"></span><span>اللي بقلبي</span></p>
+          <h2 data-reveal style="--d:.08s" id="chapter-letter">أعرف إنّج تعبانة.</h2>
+
+          <div class="letter" data-reveal style="--d:.16s">
+            <span class="seal" aria-hidden="true">ن</span>
+            <p class="salutation">نمنم،</p>
+            <p>أعرف إن الأيام صعبة، وإنّج تمرين بفترة تحملين بيها أكثر من طاقتج وأنتِ ساكتة. أعرف إن الضحكة صارت تاخذ منج جهد، وإنّج أحياناً تحسين إنّج مو كافية.</p>
+            <p>خليني أكولج شي: كل هذا اللي بقلبج، مو دليل ضعف. بالعكس. هو دليل إن قلبج كبير، وإنّج تحبين وتخافين على اللي تحبينهم. والقلوب الكبيرة، تتعب أكثر من غيرها.</p>
+
+            <figure class="pull">
+              <blockquote>التعب مو نهاية القصة...<br>التعب بس الصفحة اللي قبل الفرح.</blockquote>
+            </figure>
+
+            <p>ما راح أكولج «لا تحزنين»، لأن الحزن ما ينطفي بزر. بس أكولج: لا تحملينه لحالج. أني وياج. نقسمه نصّين، ونتجاوزه سوا. وإذا اليوم ما كدرتي تبتسمين، خليها عليّ... راح أضحّجك حتى لو اضطرّيت أطلع لج أتفه إنسان بالعالم.</p>
+            <p class="letter-last">إنتِ مو وحدج. ولا راح تكونين.</p>
+            <p class="letter-sign">— حبيبج، دايماً</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter wrap" aria-labelledby="chapter-truths">
+        <div class="narrow">
+          <p class="eyebrow" data-reveal><span class="eyebrow-num">٠٣</span><span class="eyebrow-line" aria-hidden="true"></span><span>حكايات</span></p>
+          <h2 data-reveal style="--d:.08s" id="chapter-truths">ثلاث حكايات لازم تصدّقينها.</h2>
+
+          <div class="truths">
+            <article class="truth" data-reveal>
+              <span class="truth-num">٠١</span>
+              <p class="truth-line">إنتِ أقوى <em>مما تتصورين.</em></p>
+              <p class="truth-note">وقفتِ بأشياء كثيرة كنتِ تحسبين إنّج ما تكدرين عليها. اليوم هم راح توقفين. أني شفتج، وأعرف.</p>
+            </article>
+
+            <article class="truth" data-reveal>
+              <span class="truth-num">٠٢</span>
+              <p class="truth-line">الأيام الصعبة... <em>ما تحدد منو إنتِ.</em></p>
+              <p class="truth-note">تمر الأيام، وتاخذ معاها أشياء. بس إنتِ تبقين: نظيفة، حلوة، كافية، ومحبوبين بلا شرط.</p>
+            </article>
+
+            <article class="truth" data-reveal>
+              <span class="truth-num">٠٣</span>
+              <p class="truth-line">إنتِ <em>مو لحالج.</em></p>
+              <p class="truth-note">دائماً في إيد ممدودة إلج. إيدي. حتى لو بعيدة، وحتى لو ساكتة... تظل ممدودة إلج.</p>
+            </article>
+          </div>
+        </div>
+        <span class="float-heart float-heart-b" aria-hidden="true">♥</span>
+      </section>
+
+      <section class="chapter wrap" aria-labelledby="chapter-promises">
+        <div class="section-grid">
+          <div class="section-side">
+            <p class="eyebrow" data-reveal><span class="eyebrow-num">٠٤</span><span class="eyebrow-line" aria-hidden="true"></span><span>وعد</span></p>
+            <h2 data-reveal style="--d:.08s" id="chapter-promises">هذا اللي<br>أوعدج بيه.</h2>
+            <p class="side-note" data-reveal style="--d:.16s">مو وعود كبيرة...<br>وعود يومية، صغيرة، صادقة.</p>
+          </div>
+
+          <ol class="promises">
+            <li data-reveal>
+              <span class="p-num">٠١</span>
+              <div>
+                <h3>أكون وياچ بكل حال.</h3>
+                <p>بالضحك، بالزعل، بالمرض، بالنجاح... وبكل الأيام اللي ما تحبين فيها حتى نفسج.</p>
+              </div>
+            </li>
+            <li data-reveal style="--d:.05s">
+              <span class="p-num">٠٢</span>
+              <div>
+                <h3>ما أخليج تحسين إنّج وحدج.</h3>
+                <p>حتى لو سكتنا، وحتى لو كنتي بعيدة... قلبي يظل ينادي إسمج.</p>
+              </div>
+            </li>
+            <li data-reveal style="--d:.1s">
+              <span class="p-num">٠٣</span>
+              <div>
+                <h3>أسمعج بلا حكم.</h3>
+                <p>تتكلمين، أو تسكتين... أني هنا. وإذا احتجتي تبچين، كتفي جاهز، والدنيا كلها تنتظر.</p>
+              </div>
+            </li>
+            <li data-reveal style="--d:.15s">
+              <span class="p-num">٠٤</span>
+              <div>
+                <h3>أفرح لفرحج وأحزن لحزنج.</h3>
+                <p>فرحج فرحي، وتعبج تعبي. ما عندي نص حياة... عندي حياة كاملة بس لأنّج بيها.</p>
+              </div>
+            </li>
+            <li data-reveal style="--d:.2s">
+              <span class="p-num">٠٥</span>
+              <div>
+                <h3>أحبّج بكل نسخج.</h3>
+                <p>القوية، التعبانة، الحلوة، الهبلة، العصبية، الحنونة... كلهم إنتِ، وكلهم أحبّهم.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="chapter wrap" aria-labelledby="chapter-note">
+        <div class="narrow center">
+          <p class="eyebrow eyebrow-center" data-reveal><span class="eyebrow-num">٠٥</span><span class="eyebrow-line" aria-hidden="true"></span><span>شي صغير إلج</span></p>
+          <h2 data-reveal style="--d:.08s" id="chapter-note">خذي رسالة من قلبي.</h2>
+          <p class="center-sub" data-reveal style="--d:.16s">كل مرة تضغطين الزر... راح تطلع لج كلمة جديدة.<br>لأن حبي إلج، ما يخلص.</p>
+
+          <div class="note-card" data-reveal style="--d:.2s">
+            <span class="note-glow" aria-hidden="true"></span>
+            <span class="note-heart" aria-hidden="true">
+              <svg class="ic" aria-hidden="true"><use href="#i-heart"></use></svg>
+            </span>
+            <p class="note-text" id="note-text" aria-live="polite">إنتِ أجمل شي صار بحياتي، ومو مجاملة.</p>
+            <button class="btn btn-ghost" id="note-btn" type="button">
+              <span>رسالة ثانية</span>
+              <svg class="ic" aria-hidden="true"><use href="#i-refresh"></use></svg>
+            </button>
+            <span class="note-foot">ما تنتهي الرسائل... مثل ما ما ينتهي حبي إلج.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter finale wrap" aria-labelledby="chapter-final">
+        <span class="finale-glow" aria-hidden="true"></span>
+        <div class="narrow center">
+          <p class="eyebrow eyebrow-center" data-reveal><span class="eyebrow-num">٠٦</span><span class="eyebrow-line" aria-hidden="true"></span><span>إلج</span></p>
+          <h2 class="finale-title" id="chapter-final" data-reveal style="--d:.08s">
+            <span class="always">دوماً،</span>
+            <span class="never">ومستحيل أتركج.</span>
+          </h2>
+          <svg class="scribble" viewBox="0 0 340 22" fill="none" aria-hidden="true" data-reveal style="--d:.12s">
+            <path d="M4 14C58 5 122 4 172 9c36 4 70 6 104 1 18-2 35-5 60-4" pathLength="1"/>
+          </svg>
+          <p class="finale-text" data-reveal style="--d:.16s">إذا الدنيا كلها وقفت ضدج، أني راح أكون بصفّج. وإذا كلها وقفت وياج... هم راح أكون بصفّج. ما عندي شرط، وما عندي «بس». عندي قلب اخترج من أول يوم... وكل يوم بعده.</p>
+          <p class="signature" data-reveal style="--d:.22s">حبيبج،<br><span>اللي يحبّج أكثر من أمس</span></p>
+          <p class="finale-date" data-reveal style="--d:.26s">٩ · ١١ · ٢٠٢٦</p>
+          <div class="finale-actions" data-reveal style="--d:.3s">
+            <button class="btn btn-primary" id="back-btn-2" type="button">
+              <span>رجوع للكوكب</span>
+              <svg class="ic" aria-hidden="true"><use href="#i-heart"></use></svg>
+            </button>
+            <p class="finale-micro">خلي هذا الكوكب بمفضّلتج... كل ما تحتاجينه، راح يكون هنا.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="story-foot wrap">
+        <div class="story-foot-left">
+          <p class="story-foot-brand">كوكب <span>نمنم</span></p>
+          <p class="story-foot-track"><span aria-hidden="true">♪</span> مع أغنية «خليك معايا» — عمرو دياب</p>
+        </div>
+        <p class="story-foot-latin">A LITTLE UNIVERSE, MADE OF LOVE</p>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- زر الصوت يظل معاها بكل مكان -->
+  <audio id="song" src="audio/khalik-maaya.mp3" loop preload="metadata" playsinline aria-hidden="true" tabindex="-1"></audio>
+
+  <button class="sound" id="sound-btn" type="button" aria-pressed="false" aria-label="تشغيل أغنية خليك معايا">
+    <span class="sound-icon" aria-hidden="true">
+      <svg class="sound-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7Z"/></svg>
+      <span class="sound-bars"><i></i><i></i><i></i></span>
+    </span>
+    <span class="sound-label">خليك معايا</span>
+  </button>
+
+  <noscript>
+    <style>
+      #loader { display: none !important; }
+      .hero-title, .hero-sub, .hero-actions, .brand, .site-head { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
+
+  <script src="vendor/three.umd.min.js" defer></script>
+  <script src="main.js" defer></script>
+</body>
+</html>
